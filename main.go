@@ -23,7 +23,8 @@ func ReceiveMessage(config *nsq.Config){
 
 	q, _ := nsq.NewConsumer("write_test", "ch", config)
 	q.AddHandler(nsq.HandlerFunc(func(message *nsq.Message) error {
-		log.Printf("Got a message: %v", message)
+		result := string(message.Body)
+		log.Printf("Got a message: %v", result)
 		wg.Done()
 		return nil
 	}))
