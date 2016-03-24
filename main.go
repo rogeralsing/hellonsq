@@ -6,8 +6,7 @@ import (
 	"sync"
 )
 
-func main() {
-	config := nsq.NewConfig()
+func SendMessage(config *nsq.Config){
 	w, _ := nsq.NewProducer("127.0.0.1:4150", config)
 
 	err := w.Publish("write_test", []byte("test"))
@@ -16,7 +15,9 @@ func main() {
 	}
 
 	w.Stop()
+}
 
+func ReceiveMessage(config *nsq.Config){
 	wg := &sync.WaitGroup{}
 	wg.Add(1)
 
@@ -26,9 +27,15 @@ func main() {
 		wg.Done()
 		return nil
 	}))
-	err = q.ConnectToNSQD("127.0.0.1:4150")
+	err := q.ConnectToNSQD("127.0.0.1:4150")
 	if err != nil {
 		log.Panic("Could not connect")
 	}
 	wg.Wait()
+}
+
+func main() {
+	config := nsq.NewConfig()
+	SendMessage(config)
+	ReceiveMessage(config)
 }
